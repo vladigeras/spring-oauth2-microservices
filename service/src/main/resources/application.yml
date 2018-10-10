@@ -1,0 +1,18 @@
+server:
+  port: 8703
+
+spring:
+  application:
+    name: service
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8701/eureka/
+    enabled: true
+    register-with-eureka: true
+    fetch-registry: true
+
+jwt:
+  sign:
+    key: "123"

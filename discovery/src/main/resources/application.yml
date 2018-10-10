@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: discovery
+
+server:
+  port: 8701
+
+eureka:
+  client:
+    fetch-registry: false
+    register-with-eureka: false
+    serviceUrl:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+  dashboard:
+    enabled: true
+    path: /services
+
+logging:
+  level:
+    com:
+      netflix:
+        eureka: OFF
+        discovery: OFF

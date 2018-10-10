@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: gateway
+
+server:
+  port: 8700
+
+zuul:
+  routes:
+    auth:
+      path: '/auth/**'
+      sensitiveHeaders:
+      serviceId: authorization
+    service1:
+      path: '/service/**'
+      sensitiveHeaders:
+      serviceId: service
+  prefix: "/api"
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8701/eureka/
+    enabled: true
+    register-with-eureka: true
+    fetch-registry: true

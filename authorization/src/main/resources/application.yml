@@ -12,14 +12,14 @@ spring:
       force: true
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/test
-    username: test
-    password: test
+    url: jdbc:postgresql://authdatabase/auth
+    username: auth
+    password: auth
 
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
+    #    show-sql: true
     properties:
       hibernate:
         jdbc:
@@ -31,7 +31,7 @@ eureka:
     fetch-registry: true
     register-with-eureka: true
     serviceUrl:
-      defaultZone: http://localhost:8701/eureka/
+      defaultZone: http://discoveryserver:8701/eureka/
 
 jwt:
   sign:

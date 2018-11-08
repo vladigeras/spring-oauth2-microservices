@@ -1,21 +1,21 @@
 package ru.vladigeras.authorization.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.vladigeras.authorization.service.CustomUserDetails;
-import ru.vladigeras.authorization.service.UserService;
-
-import java.util.Collections;
+import pro.cproject.mostransportauthorization.model.UserEntity;
+import pro.cproject.mostransportauthorization.model.UserStatus;
+import pro.cproject.mostransportauthorization.service.CprojectUserDetails;
+import pro.cproject.mostransportauthorization.service.UserService;
+import pro.cproject.mostransportauthorization.util.PhoneNumberUtil;
 
 /**
  * @author vladi_geras on 09/10/2018
  */
-@Service(value = "userDetailsService")
+@Service(value = "userDetailsServiceImpl")
 public class UserDetailsServiceImpl implements UserDetailsService {
 
 	@Autowired
@@ -25,10 +25,24 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
 
-		var userEntity = userService.findUserByLogin(login);
+		UserEntity userEntity;
 
-		return new CustomUserDetails(userEntity.getId(), userEntity.getLogin(), userEntity.getPassword(),
-				Collections.singleton(new SimpleGrantedAuthority(userEntity.getRole().name()))
-		);
+		if (PhoneNumberUtil.isValid(login)) {
+			userEntity = userService
+					.findUserByPhoneNumber(login)
+					.orElseThrow(() -> new UsernameNotFoundException("Пользователь с номером телефона " + login + " не существует"));
+		} else {
+			userEntity = userService
+					.findUserByLogin(login)
+					.orElseThrow(() -> new UsernameNotFoundException("Пользователь с логином " + login + " не существует"));
+		}
+
+		if (userEntity.getStatus().equals(UserStatus.BLOCKED))
+			throw new UsernameNotFoundException("Ваш аккаунт был заблокирован");
+
+		if (userEntity.getStatus().equals(UserStatus.NOT_ACTIVATED))
+			throw new UsernameNotFoundException("Ваш аккаунт не активирован");
+
+		return new CprojectUserDetails(userEntity);
 	}
 }

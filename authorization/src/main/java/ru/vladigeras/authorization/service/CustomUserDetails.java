@@ -1,9 +1,13 @@
 package ru.vladigeras.authorization.service;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import ru.vladigeras.authorization.model.UserEntity;
+import ru.vladigeras.authorization.model.UserStatus;
 
 import java.util.Collection;
+import java.util.Collections;
 
 /**
  * @author vladi_geras on 09/10/2018
@@ -14,13 +18,14 @@ public class CustomUserDetails implements UserDetails {
 	private String login;
 	private String password;
 	private Collection<? extends GrantedAuthority> roles;
+	private UserStatus status;
 
-	public CustomUserDetails(Long id, String login, String password,
-							 Collection<? extends GrantedAuthority> roles) {
-		this.id = id;
-		this.login = login;
-		this.password = password;
-		this.roles = roles;
+	public CustomUserDetails(UserEntity userEntity) {
+		this.id = userEntity.getId();
+		this.login = userEntity.getLogin();
+		this.password = userEntity.getPassword();
+		this.roles = Collections.singleton(new SimpleGrantedAuthority(userEntity.getRole().name()));
+		this.status = userEntity.getStatus();
 	}
 
 	@Override

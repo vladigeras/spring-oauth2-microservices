@@ -1,0 +1,44 @@
+version: '3'
+services:
+  authserver:
+    build: ./authorization
+    ports:
+    - 8702:8702
+    depends_on:
+    - authdatabase
+    - discoveryserver
+    - gatewayserver
+    networks:
+    - main
+  authdatabase:
+    image: postgres:11
+    restart: always
+    environment:
+    - POSTGRES_USER=auth
+    - POSTGRES_PASSWORD=auth
+    - POSTGRES_DB=auth
+    volumes:
+    - ~/Documents/docker/volumes/auth_database:/var/lib/postgresql/data
+    ports:
+    - 5702:5432
+    networks:
+    - main
+
+  discoveryserver:
+    build: ./discovery
+    ports:
+    - 8701:8701
+    networks:
+    - main
+
+  gatewayserver:
+    build: ./gateway
+    depends_on:
+    - discoveryserver
+    ports:
+    - 8700:8700
+    networks:
+    - main
+
+networks:
+  main:
